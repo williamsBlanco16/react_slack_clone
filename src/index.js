@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'semantic-ui-css/semantic.min.css'
 
 import registerServiceWorker from './registerServiceWorker';
 
@@ -25,5 +26,5 @@ const Root = () => (
   </Router>
 )
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Root />, document.getElementById('root'));
 registerServiceWorker();
