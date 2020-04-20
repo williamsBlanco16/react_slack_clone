@@ -13,11 +13,31 @@ import {
 import {Link} from 'react-router-dom'
 
 class Register extends Component {
-  handlerChange = () =>{
-    console.log('handle change')
+
+  state = {
+    userName:'',
+    email:'',
+    password:'',
+    passwordConfirmation:''
+  }
+
+  handlerChange = event => {
+    this.setState({[event.target.name]:event.target.value});
+  }
+
+  handlerSubmit = event =>{
+    event.preventDefault();
+
+    console.log('submit');
   }
 
   render() {
+    const {
+      userName,
+      email,
+      password,
+      passwordConfirmation} = this.state;
+
     return (
       <Grid textAlign='center' verticalAlign='middle' className='app'>
         <Grid.Column style={{maxWidth:450}}>
@@ -25,15 +45,16 @@ class Register extends Component {
             <Icon name='puzzle piece' color='orange'/>
               Register for devChat  
           </Header>
-          <Form size='large'>
+          <Form size='large' onSubmit={this.handlerSubmit}>
             <Segment stacked>
               <Form.Input 
-                fluid name='username' 
+                fluid name='userName' 
                 icon='user' 
                 iconPosition='left'
                 placeholder='User name'
                 onChange={this.handlerChange }
                 type='text'
+                value={userName}
               />
 
               <Form.Input 
@@ -43,6 +64,7 @@ class Register extends Component {
                 placeholder='Email Adress'
                 onChange={this.handlerChange }
                 type='email'
+                value={email}
               />
 
               <Form.Input 
@@ -52,6 +74,7 @@ class Register extends Component {
                 placeholder='Password '
                 onChange={this.handlerChange }
                 type='password'
+                value={password}
               />  
 
               <Form.Input 
@@ -61,6 +84,7 @@ class Register extends Component {
                 placeholder='Password Confirmation'
                 onChange={this.handlerChange }
                 type='password'
+                value={passwordConfirmation}
               />
 
               <Button color='orange' fluid size='large'>Submit</Button>
