@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'semantic-ui-css/semantic.min.css'
+import './components/App.css'
 
 import registerServiceWorker from './registerServiceWorker';
+
+
 
 import App from './components/App';
 import Register from './components/Auth/Register'
