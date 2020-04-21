@@ -19,7 +19,8 @@ class Register extends Component {
     email:'',
     password:'',
     passwordConfirmation:'',
-    errors:[]
+    errors:[],
+    loading:false
   }
 
   formIsValid  = ()=>{
@@ -64,6 +65,12 @@ class Register extends Component {
     
   }
 
+  handlerInputError = (errors, inputName) =>{
+    return errors.some(error => error.message.toLowerCase().includes(inputName))
+    ?'error'
+    :''
+  }
+
   handlerChange = event => {
     this.setState({[event.target.name]:event.target.value});
   }
@@ -72,13 +79,16 @@ class Register extends Component {
     event.preventDefault();
 
     if(this.formIsValid()){
+      this.setState({loading:true, errors:[]})
+
       firebase
       .auth()
       .createUserWithEmailAndPassword(this.state.email,this.state.password)
       .then(creacteUser =>{
+        this.setState({loading:false})
         console.log(creacteUser);
       })
-      .catch(err => console.log(err))
+      .catch(err => this.setState({loading:false, errors: this.state.errors.concat(err)}))
     }
     
     
@@ -90,7 +100,8 @@ class Register extends Component {
       email,
       password,
       passwordConfirmation,
-      errors} = this.state;
+      errors,
+      loading} = this.state;
 
     return (
       <Grid textAlign='center' verticalAlign='middle' className='app'>
@@ -119,6 +130,7 @@ class Register extends Component {
                 onChange={this.handlerChange }
                 type='email'
                 value={email}
+                className = {this.handlerInputError(errors,'email')}
               />
 
               <Form.Input 
@@ -129,6 +141,7 @@ class Register extends Component {
                 onChange={this.handlerChange }
                 type='password'
                 value={password}
+                className = {this.handlerInputError(errors,'password')}
               />  
 
               <Form.Input 
@@ -139,9 +152,16 @@ class Register extends Component {
                 onChange={this.handlerChange }
                 type='password'
                 value={passwordConfirmation}
+                className = {this.handlerInputError(errors,'password')}
               />
 
-              <Button color='orange' fluid size='large'>Submit</Button>
+              <Button 
+                color='orange' 
+                fluid size='large'
+                className = {loading ? 'loading' : ''}
+                disabled = {loading}
+                >Submit</Button>
+
             </Segment>
             <Message>Already a user? <Link to='/login'>login</Link></Message>
           </Form>
