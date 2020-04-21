@@ -9,6 +9,7 @@ import {
   Icon
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
+import md5 from 'md5'
 
 import firebase from '../../firebase'
 
@@ -20,7 +21,8 @@ class Register extends Component {
     password:'',
     passwordConfirmation:'',
     errors:[],
-    loading:false
+    loading:false,
+    userRef: firebase.database().ref('users')
   }
 
   formIsValid  = ()=>{
@@ -64,6 +66,15 @@ class Register extends Component {
     }
     
   }
+  
+  saveUser = createdUser=>{
+    return this.state.userRef.child(createdUser.user.uid).set(
+      {
+        name : createdUser.user.displayName,
+        avatar: createdUser.user.photoURL
+      }
+    )
+  }
 
   handlerInputError = (errors, inputName) =>{
     return errors.some(error => error.message.toLowerCase().includes(inputName))
@@ -84,9 +95,23 @@ class Register extends Component {
       firebase
       .auth()
       .createUserWithEmailAndPassword(this.state.email,this.state.password)
-      .then(creacteUser =>{
-        this.setState({loading:false})
-        console.log(creacteUser);
+      .then(createdUser =>{
+        console.log(createdUser);
+        createdUser.user.updateProfile({
+          displayName:this.state.userName,
+          photoURL:`https://www.gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+        })
+        .then(()=>{
+          this.saveUser(createdUser)
+          .then(()=>{
+            this.setState({loading:false})
+            console.log('user saved');
+          })
+        })
+        .catch(err => {
+          console.log(err)
+          this.setState({loading:false, errors: this.state.errors.concat(err)})
+        })
       })
       .catch(err => this.setState({loading:false, errors: this.state.errors.concat(err)}))
     }
