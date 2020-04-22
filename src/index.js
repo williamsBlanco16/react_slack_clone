@@ -2,32 +2,71 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'semantic-ui-css/semantic.min.css'
 import './components/App.css'
-
 import registerServiceWorker from './registerServiceWorker';
+import firebase from './firebase'
 
-
+import {createStore} from 'redux'
+import {Provider, connect} from 'react-redux'
+import {composeWithDevTools} from 'redux-devtools-extension';
+import rootReducer from './reducer'
+import {setUser} from './actions'
 
 import App from './components/App';
 import Register from './components/Auth/Register'
 import Login from './components/Auth/Login'
+import Spinner from './Spinner'
 
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  withRouter
 } from 'react-router-dom'
 
-const Root = () => (
-  <Router> 
-    <Switch>
-      <Route exact path="/" component = {App}/>
-      <Route path="/login" component = {Login}/>
-      <Route path="/register" component = {Register}/>
+const store = createStore(rootReducer,composeWithDevTools())
 
-    </Switch> 
-     
-  </Router>
-)
+class Root extends React.Component{
+  componentDidMount(){
+    firebase
+      .auth()
+      .onAuthStateChanged(user => {
+        if(user){
+          this.props.setUser(user) //dispatch
+          this.props.history.push('/')
+        }
+      })
+  }
+  
+  render(){
+    return (
+        this.props.isLoading
+        ? <Spinner/> 
+        :(
+          <Switch>
+          <Route exact path="/" component = {App}/>
+          <Route path="/login" component = {Login}/>
+          <Route path="/register" component = {Register}/>
+        </Switch>
+        )
+         
+    )
+  }
+}
 
-ReactDOM.render(<Root />, document.getElementById('root'));
+const mapStateToProps = (state)=>({
+  isLoading: state.user.isLoading
+})
+
+const RootWithAuth = withRouter(connect(mapStateToProps,{setUser})(Root));
+
+ReactDOM.render(
+  <Provider store={store}>
+    <Router>
+      <RootWithAuth />
+    </Router>
+  </Provider>
+  , 
+  document.getElementById('root')
+);
+
 registerServiceWorker();
