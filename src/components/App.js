@@ -5,23 +5,31 @@ import SidePanel from './SidePanel/SidePanel'
 import Messages from './Message/Message'
 import MetaPanel from './MetaPanel/MetaPanel'
 
-class App extends Component {
-  render() {
-    return (
-      <Grid columns='equal' className='app' style={{backgroud:'#eee'}}>
-        <ColorPanel/>
-        <SidePanel/>
+import{connect} from 'react-redux'
 
-        <Grid.Column style={{marginLeft: 320}}>
-          <Messages/> 
-        </Grid.Column>
+const App = ({currentChannel,currentUser})=>(
+  <Grid columns='equal' className='app' style={{backgroud:'#eee'}}>
+    <ColorPanel/>
+    <SidePanel/>
 
-        <Grid.Column width={4}>
-          <MetaPanel/>
-        </Grid.Column>
-      </Grid>
-    );
-  }
-}
+    <Grid.Column style={{marginLeft: 320}}>
+      <Messages 
+        key={currentChannel && currentChannel.id} 
+        currentChannel={currentChannel}
+        currentUser = {currentUser}
+      /> 
+    </Grid.Column>
 
-export default App;
+    <Grid.Column width={4}>
+      <MetaPanel/>
+    </Grid.Column>
+  </Grid>
+);
+  
+
+
+const mapStateToProps = state =>({
+  currentChannel: state.channel.currentChannel ,
+  currentUser:state.user.currentUser 
+})
+export default connect(mapStateToProps)(App);
