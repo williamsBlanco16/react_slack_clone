@@ -8,11 +8,17 @@ import MetaPanel from './MetaPanel/MetaPanel'
 class App extends Component {
   render() {
     return (
-      <Grid>
+      <Grid columns='equal' className='app' style={{backgroud:'#eee'}}>
         <ColorPanel/>
         <SidePanel/>
-        <Messages/>
-        <MetaPanel/>
+
+        <Grid.Column style={{marginLeft: 320}}>
+          <Messages/> 
+        </Grid.Column>
+
+        <Grid.Column width={4}>
+          <MetaPanel/>
+        </Grid.Column>
       </Grid>
     );
   }

@@ -10,7 +10,13 @@ const user_reducer = (state = initialState,action)=>{
   switch (action.type) {
     case actionTypes.SET_USER:
       return{
-        currentUser: action.payload,
+        currentUser: action.payload.currentUser,
+        isLoading:false
+      }
+
+    case actionTypes.CLEAR_USER:
+      return{
+        ...initialState,
         isLoading:false
       }
   
@@ -20,8 +26,7 @@ const user_reducer = (state = initialState,action)=>{
 }
 
 const rootReducer = combineReducers({
-  user: user_reducer,
-  isLoading:false
+  user: user_reducer
 })
 
 export default rootReducer;
