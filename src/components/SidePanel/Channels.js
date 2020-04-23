@@ -116,6 +116,13 @@ class Channels extends Component {
     ))
   )
   
+  componentWillUnmount(){
+    this.removeListeners();
+  }
+
+  removeListeners = ()=>{
+    this.state.channelRef.off();
+  }
 
   render() {
     const {channels,modal} = this.state;
